@@ -7,12 +7,12 @@
 *   Run the actual program, allowing the user to send prompts to the client
 *   
 *   CURRENT TODO:
-*   Fix ordering of tasks.
 *   Add logic for question/questionS and so on. 
 *   Add comments.
 *   Possibly streamline the creation of new difficulties
 */
 
+using System.Threading.Tasks;
 using Mscc.GenerativeAI;
 
 void Main()
@@ -95,8 +95,8 @@ GenerativeModel ConnectToAPIAndCreateModel(string apiKey, string champion)
     string context = string.Format(
     """
     You will be asked a series of questions, asking you to describe or reveal something about a League of Legends champion.
-    You will under no circumstance REVEAL the name of the champion in question. 
-    Your answers to the questions will be as descriptive as possible, without revealing the champions name.
+    You will under NO circumstance REVEAL the name of the champion in question. 
+    Your answers to the questions will be detailed, but without adding extra unnessecary clues.
     Your answer must not be above the length of 400 characters.
 
     The champion you will be describing is: {0}
@@ -129,7 +129,7 @@ static string GetAPIKey()
     }
 }
 
-void RunGame(Game game)
+async Task RunGame(Game game)
 {
     Console.WriteLine("All good to go. You have " + game.GetTotalGuesses() + " guesses in total. Please proceed to ask your first question.");
 
@@ -142,7 +142,7 @@ void RunGame(Game game)
         if (game.GetTotalQuestions() > 0)
         {
             Console.WriteLine("You have " + game.GetTotalQuestions() + " questions left. Please enter a question.");
-            AwaitQuestionAndReply();
+            AwaitQuestionAndReply().Wait();
             AskForGuess();
         }
         else
@@ -164,7 +164,7 @@ void RunGame(Game game)
             if (question.Length > 1000)
             {
                 Console.WriteLine("Please.. ask a shorter question.");
-                AwaitQuestionAndReply();
+                AwaitQuestionAndReply().Wait();
             }
             else
             {
